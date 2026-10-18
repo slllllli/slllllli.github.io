@@ -211,8 +211,6 @@ Content is published under [CC BY-NC-SA 4.0](https://creativecommons.org/license
 
 ## 中文说明
 
-**默认展示英文，中文版位于 `/zh/` 下。**
-
 「论文解构室」是一份中英双语的论文精读笔记，关注机器学习基础论文中的四个问题：**问题、机制、证据、局限**。每篇笔记都按同一套结构展开，方便在不同论文之间比较。
 
 首篇置顶文章《写在开篇：我们如何精读一篇论文》以《Attention Is All You Need》为例，演示了这套阅读方法。
