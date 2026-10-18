@@ -1,0 +1,155 @@
+<%
+  const lang = current_lang(page);
+  const posts = page.posts.toArray ? page.posts.toArray() : page.posts;
+  const isFirst = !page.current || page.current === 1;
+  const pinned = posts.filter(function (post) { return Number(post.sticky) > 0; });
+  const latest = isFirst
+    ? posts.filter(function (post) { return !(Number(post.sticky) > 0); })
+    : posts;
+  const stats = site_stats(lang);
+  const primaryPath = pinned.length
+    ? pinned[0].path
+    : localized_path('/archives/', lang);
+  const roadmap = lang === 'zh'
+    ? [
+        { title: 'Attention Is All You Need', venue: 'NeurIPS 2017', tag: 'Transformer', next: true },
+        { title: 'BERT', venue: 'NAACL 2019', tag: '预训练' },
+        { title: 'Language Models are Few-Shot Learners', venue: 'NeurIPS 2020', tag: '上下文学习' },
+        { title: 'Deep Residual Learning', venue: 'CVPR 2016', tag: '残差连接' }
+      ]
+    : [
+        { title: 'Attention Is All You Need', venue: 'NeurIPS 2017', tag: 'Transformer', next: true },
+        { title: 'BERT', venue: 'NAACL 2019', tag: 'Pretraining' },
+        { title: 'Language Models are Few-Shot Learners', venue: 'NeurIPS 2020', tag: 'In-context learning' },
+        { title: 'Deep Residual Learning', venue: 'CVPR 2016', tag: 'Residual connections' }
+      ];
+%>
+
+<% if (isFirst) { %>
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span><%= t('home.eyebrow', lang) %></p>
+        <h1 class="hero-title"><%= t('home.title', lang) %></h1>
+        <p class="hero-lede"><%= t('home.description', lang) %></p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="<%= url_for(primaryPath) %>">
+            <%= t('home.cta_primary', lang) %>
+            <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a class="button button-ghost" href="<%= url_for(localized_path('/archives/', lang)) %>"><%= t('home.cta_secondary', lang) %></a>
+        </div>
+        <dl class="hero-stats">
+          <div><dt><%= stats.notes %></dt><dd><%= t('home.stat_notes', lang) %></dd></div>
+          <div><dt><%= stats.topics %></dt><dd><%= t('home.stat_topics', lang) %></dd></div>
+          <div><dt><%= stats.languages %></dt><dd><%= t('home.stat_languages', lang) %></dd></div>
+        </dl>
+      </div>
+
+      <div class="hero-art" aria-hidden="true">
+        <div class="paper-sheet">
+          <span class="paper-corner"></span>
+          <p class="paper-label">Paper note / 001</p>
+          <p class="paper-title">Attention Is<br>All You Need</p>
+          <p class="paper-formula">softmax(QK<sup>T</sup> / &radic;d<sub>k</sub>)V</p>
+          <div class="paper-lines">
+            <span></span><span></span><span></span>
+          </div>
+          <p class="paper-foot">The question &middot; the mechanism &middot; the limits</p>
+        </div>
+        <div class="hero-ring"></div>
+      </div>
+    </div>
+  </section>
+
+  <% if (theme.pinned && pinned.length) { %>
+    <section class="section pinned-section">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker"><%= t('common.pinned', lang) %></p>
+            <h2 class="section-title"><%= t('home.pinned', lang) %></h2>
+          </div>
+          <p class="section-note"><%= t('home.pinned_desc', lang) %></p>
+        </div>
+        <div class="pinned-grid">
+          <% pinned.forEach(function (post) { %>
+            <%- partial('_partial/post-card', { post: post, lang: lang, featured: true }) %>
+          <% }); %>
+        </div>
+      </div>
+    </section>
+  <% } %>
+<% } %>
+
+<% if (latest.length || !pinned.length) { %>
+<section class="section notes-section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="section-kicker"><%= isFirst ? (lang === 'zh' ? '笔记' : 'Notes') : t('pagination.page', lang) + ' ' + page.current %></p>
+        <h2 class="section-title"><%= t('home.latest', lang) %></h2>
+      </div>
+      <p class="section-note"><%= t('home.latest_desc', lang) %></p>
+    </div>
+
+    <% if (latest.length) { %>
+      <div class="notes-grid">
+        <% latest.forEach(function (post) { %>
+          <%- partial('_partial/post-card', { post: post, lang: lang, featured: false }) %>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <p class="empty-state"><%= t('home.empty', lang) %></p>
+    <% } %>
+
+    <%- partial('_partial/pagination', { page: page, lang: lang }) %>
+  </div>
+</section>
+<% } %>
+
+<% if (isFirst) { %>
+  <section class="section method-section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker"><%= lang === 'zh' ? '方法' : 'Method' %></p>
+          <h2 class="section-title"><%= t('home.how_title', lang) %></h2>
+        </div>
+        <p class="section-note"><%= t('home.how_desc', lang) %></p>
+      </div>
+      <div class="method-grid">
+        <% [1, 2, 3, 4].forEach(function (n) { %>
+          <article class="method-card">
+            <span class="method-number">0<%= n %></span>
+            <h3><%= t('home.how_' + n + '_title', lang) %></h3>
+            <p><%= t('home.how_' + n + '_desc', lang) %></p>
+          </article>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+
+  <section class="section roadmap-section">
+    <div class="container roadmap-grid">
+      <div>
+        <p class="section-kicker"><%= lang === 'zh' ? '待读' : 'Queue' %></p>
+        <h2 class="section-title"><%= t('home.roadmap_title', lang) %></h2>
+        <p class="section-note"><%= t('home.roadmap_desc', lang) %></p>
+        <p class="roadmap-hint"><%= t('home.roadmap_note', lang) %></p>
+      </div>
+      <ol class="roadmap-list">
+        <% roadmap.forEach(function (item, index) { %>
+          <li class="roadmap-item<%= item.next ? ' is-next' : '' %>">
+            <span class="roadmap-index"><%= String(index + 1).padStart(2, '0') %></span>
+            <span class="roadmap-body">
+              <span class="roadmap-title"><%= item.title %></span>
+              <span class="roadmap-meta"><%= item.venue %> &middot; <%= item.tag %></span>
+            </span>
+            <% if (item.next) { %><span class="roadmap-badge"><%= lang === 'zh' ? '下一篇' : 'Next' %></span><% } %>
+          </li>
+        <% }); %>
+      </ol>
+    </div>
+  </section>
+<% } %>

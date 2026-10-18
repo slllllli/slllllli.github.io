@@ -1,0 +1,29 @@
+<%
+  const lang = current_lang(page);
+  const isPost = is_post();
+  const isHome = Boolean(page.__index);
+  const bodyClass = [
+    'lang-' + lang,
+    isPost ? 'is-post' : '',
+    isHome ? 'is-home' : '',
+    page.archive ? 'is-archive' : '',
+    page.layout === 'topics' ? 'is-topics' : '',
+    page.layout === 'page' ? 'is-page' : ''
+  ].filter(Boolean).join(' ');
+%>
+<!DOCTYPE html>
+<html lang="<%= html_lang(lang) %>" data-theme="light">
+<head>
+  <%- partial('_partial/head', { lang }) %>
+</head>
+<body class="<%= bodyClass %>">
+  <a class="skip-link" href="#main"><%= t('header.skip', lang) %></a>
+  <div id="top"></div>
+  <%- partial('_partial/header', { lang }) %>
+  <main id="main" class="site-main">
+    <%- body %>
+  </main>
+  <%- partial('_partial/footer', { lang }) %>
+  <%- partial('_partial/scripts') %>
+</body>
+</html>

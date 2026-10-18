@@ -1,0 +1,32 @@
+<%
+  const lang = current_lang(page);
+  const translation = site.pages.toArray().find(function (item) {
+    return item.translation
+      && item.translation === page.translation
+      && (item.lang === 'zh' ? 'zh' : 'en') !== lang;
+  });
+%>
+<article class="page">
+  <header class="page-header">
+    <div class="container page-header-inner">
+      <p class="section-kicker"><%= page.translation === 'about' ? (lang === 'zh' ? '关于本站' : 'About this notebook') : (lang === 'zh' ? '页面' : 'Page') %></p>
+      <h1 class="page-title"><%= page.title %></h1>
+      <% if (page.subtitle) { %><p class="page-subtitle"><%= page.subtitle %></p><% } %>
+    </div>
+  </header>
+
+  <div class="container page-layout">
+    <div class="prose page-prose">
+      <%- page.content %>
+    </div>
+
+    <% if (translation) { %>
+      <aside class="page-aside">
+        <a class="translation-callout" href="<%= url_for(translation.path) %>" hreflang="<%= translation.lang === 'zh' ? 'zh-CN' : 'en' %>">
+          <span class="translation-label"><%= t('post.also_available', lang) %></span>
+          <span class="translation-title"><%= translation.title %> &rarr;</span>
+        </a>
+      </aside>
+    <% } %>
+  </div>
+</article>

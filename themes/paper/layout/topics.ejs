@@ -1,0 +1,50 @@
+<%
+  const lang = current_lang(page);
+  const categories = topic_groups(lang);
+  const tags = tag_groups(lang);
+%>
+<header class="page-header">
+  <div class="container page-header-inner">
+    <p class="section-kicker"><%= lang === 'zh' ? '索引' : 'Index' %></p>
+    <h1 class="page-title"><%= t('topics.title', lang) %></h1>
+    <p class="page-subtitle"><%= t('topics.desc', lang) %></p>
+    <% if (page.content) { %><div class="page-intro prose"><%- page.content %></div><% } %>
+  </div>
+</header>
+
+<div class="container topics-layout">
+  <section class="topics-section">
+    <h2 class="topics-heading"><%= t('topics.categories', lang) %></h2>
+    <% if (categories.length) { %>
+      <% categories.forEach(function (category) { %>
+        <section class="topic-group" id="cat-<%= category.slug %>">
+          <header class="topic-group-head">
+            <h3><%= category.name %></h3>
+            <span><%= category.count %> <%= t('topics.count', lang) %></span>
+          </header>
+          <div class="topic-posts">
+            <% category.posts.forEach(function (post) { %>
+              <a class="topic-post" href="<%= url_for(post.path) %>">
+                <span class="topic-post-title"><%= post.title %></span>
+                <span class="topic-post-meta"><%= format_date(post.date, lang, 'short') %> &middot; <%= reading_time(post) %> <%= t('common.min_read', lang) %></span>
+              </a>
+            <% }); %>
+          </div>
+        </section>
+      <% }); %>
+    <% } else { %>
+      <p class="empty-state"><%= t('topics.empty', lang) %></p>
+    <% } %>
+  </section>
+
+  <% if (tags.length) { %>
+    <aside class="topics-aside">
+      <h2 class="topics-heading"><%= t('topics.tags', lang) %></h2>
+      <div class="tag-cloud">
+        <% tags.forEach(function (tag) { %>
+          <span class="tag-chip"><%= tag.name %> <span class="tag-count"><%= tag.count %></span></span>
+        <% }); %>
+      </div>
+    </aside>
+  <% } %>
+</div>

@@ -1,0 +1,51 @@
+<%
+  const lang = current_lang(page);
+  const posts = page.posts.toArray ? page.posts.toArray() : page.posts;
+  const groups = {};
+  posts.forEach(function (post) {
+    const year = post.date.year();
+    if (!groups[year]) groups[year] = [];
+    groups[year].push(post);
+  });
+  const years = Object.keys(groups).sort(function (a, b) { return b - a; });
+%>
+<header class="page-header">
+  <div class="container page-header-inner">
+    <p class="section-kicker"><%= lang === 'zh' ? '全部笔记' : 'All notes' %></p>
+    <h1 class="page-title"><%= t('archive.title', lang) %></h1>
+    <p class="page-subtitle"><%= t('archive.desc', lang) %></p>
+  </div>
+</header>
+
+<div class="container archive-layout">
+  <% if (years.length) { %>
+    <% years.forEach(function (year) { %>
+      <section class="archive-year">
+        <div class="archive-year-head">
+          <h2><%= year %></h2>
+          <span><%= groups[year].length %> <%= lang === 'zh' ? '篇' : (groups[year].length === 1 ? 'note' : 'notes') %></span>
+        </div>
+        <div class="archive-rows">
+          <% groups[year].forEach(function (post) { %>
+            <a class="archive-row<%= Number(post.sticky) > 0 ? ' is-pinned' : '' %>" href="<%= url_for(post.path) %>">
+              <time datetime="<%= date_xml(post.date) %>"><%= format_date(post.date, lang, 'short') %></time>
+              <span class="archive-row-main">
+                <span class="archive-row-title"><%= post.title %></span>
+                <% const category = post_category(post); %>
+                <% if (category) { %><span class="archive-row-category"><%= category.name %></span><% } %>
+              </span>
+              <% if (Number(post.sticky) > 0) { %>
+                <span class="pin-badge compact"><%= t('common.pinned', lang) %></span>
+              <% } %>
+              <% if (theme.reading_time) { %>
+                <span class="archive-row-time"><%= reading_time(post) %> <%= t('common.min_read', lang) %></span>
+              <% } %>
+            </a>
+          <% }); %>
+        </div>
+      </section>
+    <% }); %>
+  <% } else { %>
+    <p class="empty-state"><%= t('archive.empty', lang) %></p>
+  <% } %>
+</div>

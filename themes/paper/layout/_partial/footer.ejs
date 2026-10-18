@@ -1,0 +1,40 @@
+<%
+  const year = new Date().getFullYear();
+  const homePath = localized_path('/', lang);
+%>
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a class="brand brand-footer" href="<%= url_for(homePath) %>">
+        <span class="brand-mark" aria-hidden="true"><%= t('brand.mark', lang) %></span>
+        <span class="brand-name"><%= site_title(lang) %></span>
+      </a>
+      <p class="footer-tagline"><%= t('footer.tagline', lang) %></p>
+      <p class="footer-license">
+        <a href="<%= theme.license_url %>" target="_blank" rel="noopener noreferrer license"><%= theme.license %></a>
+      </p>
+    </div>
+
+    <div class="footer-links">
+      <p class="footer-heading"><%= t('footer.explore', lang) %></p>
+      <a href="<%= url_for(homePath) %>"><%= t('nav.home', lang) %></a>
+      <a href="<%= url_for(localized_path('/archives/', lang)) %>"><%= t('nav.archives', lang) %></a>
+      <a href="<%= url_for(localized_path('/topics/', lang)) %>"><%= t('nav.topics', lang) %></a>
+      <a href="<%= url_for(localized_path('/about/', lang)) %>"><%= t('nav.about', lang) %></a>
+    </div>
+
+    <div class="footer-links">
+      <p class="footer-heading"><%= lang === 'zh' ? '其他' : 'Elsewhere' %></p>
+      <% if (theme.links && theme.links.github) { %>
+        <a href="<%= theme.links.github %>" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <% } %>
+      <a href="<%= url_for(alt_path(page)) %>"><%= lang === 'zh' ? 'English edition' : '中文版' %></a>
+      <a href="#top"><%= t('footer.top', lang) %></a>
+    </div>
+  </div>
+
+  <div class="container footer-bottom">
+    <p>&copy; <%= year %> <%= config.author || site_title(lang) %>. <%= t('footer.rights', lang) %></p>
+    <p><%= t('footer.built', lang) %></p>
+  </div>
+</footer>

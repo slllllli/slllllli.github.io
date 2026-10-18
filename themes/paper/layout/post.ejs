@@ -1,0 +1,112 @@
+<%
+  const lang = current_lang(page);
+  const category = post_category(page);
+  const pinned = Number(page.sticky) > 0;
+  const tocHtml = toc(page.content, { list_number: false, class: 'toc-list' });
+  const hasToc = tocHtml && tocHtml.indexOf('<li') !== -1;
+  const older = sibling_post(page, 'older');
+  const newer = sibling_post(page, 'newer');
+  const translation = site.posts.toArray().find(function (post) {
+    return post.translation
+      && post.translation === page.translation
+      && (post.lang === 'zh' ? 'zh' : 'en') !== lang;
+  });
+  const updatedLater = page.updated && page.updated.valueOf() > page.date.valueOf() + 86400000;
+%>
+<div class="reading-progress" aria-hidden="true"><span id="reading-progress-bar"></span></div>
+
+<article class="post">
+  <header class="post-header">
+    <div class="container post-header-inner">
+      <div class="post-kicker">
+        <% if (category) { %><a class="note-category" href="<%= url_for(localized_path('/topics/', lang)) %>#cat-<%= category.slug %>"><%= category.name %></a><% } %>
+        <% if (pinned) { %>
+          <span class="pin-badge">
+            <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M8 1.5 9.8 5l3.8.5-2.8 2.7.7 3.8L8 10.2 4.5 12l.7-3.8L2.4 5.5 6.2 5 8 1.5Z" fill="currentColor"/></svg>
+            <%= t('common.pinned', lang) %>
+          </span>
+        <% } %>
+        <span class="post-lang"><%= lang === 'zh' ? '中文' : 'English' %></span>
+      </div>
+
+      <h1 class="post-title"><%= page.title %></h1>
+      <% if (page.subtitle) { %><p class="post-subtitle"><%= page.subtitle %></p><% } %>
+
+      <div class="post-meta">
+        <span><%= t('common.published', lang) %> <time datetime="<%= date_xml(page.date) %>"><%= format_date(page.date, lang) %></time></span>
+        <% if (theme.reading_time) { %>
+          <span class="meta-dot" aria-hidden="true"></span>
+          <span><%= reading_time(page) %> <%= t('common.min_read', lang) %></span>
+        <% } %>
+        <% if (updatedLater) { %>
+          <span class="meta-dot" aria-hidden="true"></span>
+          <span><%= t('common.updated', lang) %> <time datetime="<%= date_xml(page.updated) %>"><%= format_date(page.updated, lang) %></time></span>
+        <% } %>
+      </div>
+    </div>
+  </header>
+
+  <div class="container post-layout<%= hasToc ? '' : ' no-toc' %>">
+    <div class="post-body">
+      <div class="prose">
+        <%- page.content %>
+      </div>
+
+      <footer class="post-footer">
+        <% if (page.tags && page.tags.length) { %>
+          <div class="post-tags">
+            <span class="post-tags-label"><%= t('common.tags', lang) %></span>
+            <% page.tags.toArray().forEach(function (tag) { %>
+              <span class="tag-chip"><%= tag.name %></span>
+            <% }); %>
+          </div>
+        <% } %>
+
+        <% if (translation) { %>
+          <a class="translation-callout" href="<%= url_for(translation.path) %>" hreflang="<%= translation.lang === 'zh' ? 'zh-CN' : 'en' %>">
+            <span class="translation-label"><%= t('post.also_available', lang) %></span>
+            <span class="translation-title"><%= translation.title %> &rarr;</span>
+          </a>
+        <% } %>
+
+        <% if (theme.post_nav && (older || newer)) { %>
+          <nav class="post-nav" aria-label="<%= lang === 'zh' ? '文章导航' : 'Post navigation' %>">
+            <% if (older) { %>
+              <a class="post-nav-link post-nav-prev" href="<%= url_for(older.path) %>" rel="prev">
+                <span class="post-nav-dir">&larr; <%= t('post.previous', lang) %></span>
+                <span class="post-nav-title"><%= older.title %></span>
+              </a>
+            <% } else { %><span></span><% } %>
+            <% if (newer) { %>
+              <a class="post-nav-link post-nav-next" href="<%= url_for(newer.path) %>" rel="next">
+                <span class="post-nav-dir"><%= t('post.next', lang) %> &rarr;</span>
+                <span class="post-nav-title"><%= newer.title %></span>
+              </a>
+            <% } %>
+          </nav>
+        <% } %>
+      </footer>
+    </div>
+
+    <aside class="post-aside">
+      <% if (theme.toc && hasToc) { %>
+        <div class="toc-card">
+          <p class="toc-title"><%= t('post.toc', lang) %></p>
+          <nav class="toc-nav" aria-label="<%= t('post.toc', lang) %>">
+            <%- tocHtml %>
+          </nav>
+        </div>
+      <% } %>
+
+      <div class="aside-card">
+        <p class="aside-label"><%= lang === 'zh' ? '版本' : 'Edition' %></p>
+        <% if (translation) { %>
+          <a class="aside-link" href="<%= url_for(translation.path) %>"><%= lang === 'zh' ? 'Read in English' : '阅读中文版' %> &rarr;</a>
+        <% } else { %>
+          <p class="aside-note"><%= lang === 'zh' ? '暂无英文版本。' : 'Chinese edition coming soon.' %></p>
+        <% } %>
+        <a class="aside-link muted" href="<%= url_for(localized_path('/archives/', lang)) %>"><%= t('post.back', lang) %></a>
+      </div>
+    </aside>
+  </div>
+</article>

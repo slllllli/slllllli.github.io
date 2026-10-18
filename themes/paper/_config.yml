@@ -1,0 +1,25 @@
+# ============================================================
+# The Paper Room — theme configuration
+# ============================================================
+
+# Navigation. Paths are automatically prefixed with /zh/ on the
+# Chinese tree by the theme.
+menu:
+  home: /
+  archives: /archives/
+  topics: /topics/
+  about: /about/
+
+# Header icon link
+links:
+  github: https://github.com/slllllli
+
+# Reading experience
+reading_time: true
+toc: true
+post_nav: true
+pinned: true
+
+# Footer
+license: 'CC BY-NC-SA 4.0'
+license_url: https://creativecommons.org/licenses/by-nc-sa/4.0/

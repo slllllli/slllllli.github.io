@@ -1,0 +1,40 @@
+<%
+  const category = post_category(post);
+  const pinned = Number(post.sticky) > 0;
+  const subtitle = post.subtitle || '';
+  const excerpt = excerpt_text(post, featured ? 260 : 150);
+  const dateText = format_date(post.date, lang);
+  const minutes = reading_time(post);
+%>
+<article class="note-card<%= featured ? ' note-card-featured' : '' %><%= pinned ? ' is-pinned' : '' %>">
+  <a class="note-link" href="<%= url_for(post.path) %>">
+    <div class="note-top">
+      <% if (category) { %>
+        <span class="note-category"><%= category.name %></span>
+      <% } %>
+      <% if (pinned) { %>
+        <span class="pin-badge">
+          <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M8 1.5 9.8 5l3.8.5-2.8 2.7.7 3.8L8 10.2 4.5 12l.7-3.8L2.4 5.5 6.2 5 8 1.5Z" fill="currentColor"/></svg>
+          <%= t('common.pinned', lang) %>
+        </span>
+      <% } %>
+    </div>
+
+    <h3 class="note-title"><%= post.title %></h3>
+    <% if (featured && subtitle) { %><p class="note-subtitle"><%= subtitle %></p><% } %>
+    <p class="note-excerpt"><%= excerpt %></p>
+
+    <div class="note-footer">
+      <div class="note-meta">
+        <time datetime="<%= date_xml(post.date) %>"><%= dateText %></time>
+        <% if (theme.reading_time) { %>
+          <span class="meta-dot" aria-hidden="true"></span>
+          <span><%= minutes %> <%= t('common.min_read', lang) %></span>
+        <% } %>
+      </div>
+      <span class="note-arrow" aria-hidden="true">
+        <svg viewBox="0 0 20 20" width="17" height="17"><path d="M4 10h11M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+    </div>
+  </a>
+</article>

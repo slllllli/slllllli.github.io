@@ -1,0 +1,23 @@
+<% if (page.total > 1) { %>
+  <nav class="pagination" aria-label="<%= lang === 'zh' ? '分页' : 'Pagination' %>">
+    <% if (page.prev > 0) { %>
+      <a class="pagination-link pagination-prev" href="<%= url_for(page.prev_link) %>" rel="prev">
+        <span aria-hidden="true">&larr;</span> <%= t('pagination.previous', lang) %>
+      </a>
+    <% } else { %>
+      <span class="pagination-link is-disabled"><span aria-hidden="true">&larr;</span> <%= t('pagination.previous', lang) %></span>
+    <% } %>
+
+    <span class="pagination-status">
+      <%= t('pagination.page', lang) %> <strong><%= page.current %></strong> / <%= page.total %>
+    </span>
+
+    <% if (page.next > 0) { %>
+      <a class="pagination-link pagination-next" href="<%= url_for(page.next_link) %>" rel="next">
+        <%= t('pagination.next', lang) %> <span aria-hidden="true">&rarr;</span>
+      </a>
+    <% } else { %>
+      <span class="pagination-link is-disabled"><%= t('pagination.next', lang) %> <span aria-hidden="true">&rarr;</span></span>
+    <% } %>
+  </nav>
+<% } %>
